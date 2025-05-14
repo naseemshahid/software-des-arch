@@ -1,0 +1,12 @@
+Report Type: Supplier
+Start Date: 2025-05-08
+End Date: 2025-05-15
+Description: abc
+
+----------------------------------------
+Report Type: Sales
+Start Date: 2025-05-08
+End Date: 2025-12-28
+Description: pepsi
+
+----------------------------------------
