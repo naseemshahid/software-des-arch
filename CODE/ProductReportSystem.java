@@ -211,21 +211,21 @@ public class ProductReportSystem extends JFrame {
         viewReportsButton = new JButton("View Reports");
         viewReportsButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         viewReportsButton.setBackground(new Color(70, 130, 180));
-        viewReportsButton.setForeground(Color.WHITE);
+        viewReportsButton.setForeground(Color.blue);
         viewReportsButton.addActionListener(e -> viewReports());
         buttonPanel.add(viewReportsButton);
 
         clearButton = new JButton("Clear");
         clearButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         clearButton.setBackground(new Color(220, 53, 69));
-        clearButton.setForeground(Color.WHITE);
+        clearButton.setForeground(Color.blue);
         clearButton.addActionListener(e -> clearForm());
         buttonPanel.add(clearButton);
 
         generateButton = new JButton("Generate Report");
         generateButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
         generateButton.setBackground(new Color(34, 139, 34));
-        generateButton.setForeground(Color.WHITE);
+        generateButton.setForeground(Color.blue);
         generateButton.addActionListener(this::generateReport);
         buttonPanel.add(generateButton);
 
