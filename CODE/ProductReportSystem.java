@@ -18,6 +18,7 @@ public class ProductReportSystem extends JFrame {
     private JTextArea descriptionArea;
     private JButton generateButton;
     private JButton clearButton;
+    private JButton viewReportsButton;
 
     // Data Storage
     private List<SaleRecord> salesData;
@@ -25,7 +26,7 @@ public class ProductReportSystem extends JFrame {
     private List<CustomerRecord> customerData;
     private List<SupplierRecord> supplierData;
 
-    // Data Model Classes
+    // Data Model Classes (unchanged)
     private static class SaleRecord {
         LocalDate date;
         String product;
@@ -116,57 +117,118 @@ public class ProductReportSystem extends JFrame {
     private void initComponents() {
         setTitle("Product Report Generator");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(700, 450);
+        setSize(800, 550);
         setLocationRelativeTo(null);
+
+        // Set application icon
+        try {
+            ImageIcon icon = new ImageIcon("icon.png"); // Replace with your icon path
+            setIconImage(icon.getImage());
+        } catch (Exception e) {
+            System.out.println("Icon not found, using default");
+        }
 
         // Main panel with border layout
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        mainPanel.setBackground(new Color(240, 240, 240));
 
-        // Form panel
-        JPanel formPanel = new JPanel(new GridLayout(0, 2, 10, 10));
+        // Header panel
+        JPanel headerPanel = new JPanel();
+        headerPanel.setBackground(new Color(50, 120, 180));
+        JLabel titleLabel = new JLabel("Product Report Generator");
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        titleLabel.setForeground(Color.WHITE);
+        headerPanel.add(titleLabel);
+        mainPanel.add(headerPanel, BorderLayout.NORTH);
+
+        // Form panel with card layout for different report types
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createTitledBorder("Report Parameters"),
+            BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        ));
+        formPanel.setBackground(Color.WHITE);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // Report type
-        formPanel.add(new JLabel("Report Type:"));
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        formPanel.add(new JLabel("Report Type:"), gbc);
+        
+        gbc.gridx = 1;
         String[] reportTypes = {"Sales", "Inventory", "Customer", "Supplier"};
         reportTypeComboBox = new JComboBox<>(reportTypes);
-        formPanel.add(reportTypeComboBox);
+        reportTypeComboBox.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        formPanel.add(reportTypeComboBox, gbc);
 
         // Start date
-        formPanel.add(new JLabel("Start Date (YYYY-MM-DD):"));
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        formPanel.add(new JLabel("Start Date (YYYY-MM-DD):"), gbc);
+        
+        gbc.gridx = 1;
         startDateField = new JTextField();
         startDateField.setText(LocalDate.now().minusDays(7).toString());
-        formPanel.add(startDateField);
+        startDateField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        formPanel.add(startDateField, gbc);
 
         // End date
-        formPanel.add(new JLabel("End Date (YYYY-MM-DD):"));
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        formPanel.add(new JLabel("End Date (YYYY-MM-DD):"), gbc);
+        
+        gbc.gridx = 1;
         endDateField = new JTextField();
         endDateField.setText(LocalDate.now().toString());
-        formPanel.add(endDateField);
+        endDateField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        formPanel.add(endDateField, gbc);
 
         // Description
-        formPanel.add(new JLabel("Description:"));
-        descriptionArea = new JTextArea(3, 20);
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        formPanel.add(new JLabel("Description:"), gbc);
+        
+        gbc.gridx = 1;
+        gbc.gridheight = 2;
+        descriptionArea = new JTextArea(4, 20);
+        descriptionArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        descriptionArea.setLineWrap(true);
+        descriptionArea.setWrapStyleWord(true);
         JScrollPane scrollPane = new JScrollPane(descriptionArea);
-        formPanel.add(scrollPane);
+        formPanel.add(scrollPane, gbc);
+
+        mainPanel.add(formPanel, BorderLayout.CENTER);
 
         // Button panel
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
-        generateButton = new JButton("Generate Report");
-        generateButton.addActionListener(this::generateReport);
-        generateButton.setBackground(new Color(34, 139, 34));
-        generateButton.setForeground(Color.WHITE);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
+        buttonPanel.setBackground(new Color(240, 240, 240));
+
+        viewReportsButton = new JButton("View Reports");
+        viewReportsButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        viewReportsButton.setBackground(new Color(70, 130, 180));
+        viewReportsButton.setForeground(Color.WHITE);
+        viewReportsButton.addActionListener(e -> viewReports());
+        buttonPanel.add(viewReportsButton);
 
         clearButton = new JButton("Clear");
-        clearButton.addActionListener(e -> clearForm());
+        clearButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         clearButton.setBackground(new Color(220, 53, 69));
         clearButton.setForeground(Color.WHITE);
-
+        clearButton.addActionListener(e -> clearForm());
         buttonPanel.add(clearButton);
+
+        generateButton = new JButton("Generate Report");
+        generateButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        generateButton.setBackground(new Color(34, 139, 34));
+        generateButton.setForeground(Color.WHITE);
+        generateButton.addActionListener(this::generateReport);
         buttonPanel.add(generateButton);
 
-        // Add panels to main panel
-        mainPanel.add(formPanel, BorderLayout.CENTER);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         add(mainPanel);
@@ -180,8 +242,7 @@ public class ProductReportSystem extends JFrame {
 
         // Validate inputs
         if (startDateStr.isEmpty() || endDateStr.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please enter both start and end dates", 
-                "Error", JOptionPane.ERROR_MESSAGE);
+            showErrorDialog("Please enter both start and end dates");
             return;
         }
 
@@ -191,8 +252,7 @@ public class ProductReportSystem extends JFrame {
             LocalDate endDate = LocalDate.parse(endDateStr, formatter);
 
             if (startDate.isAfter(endDate)) {
-                JOptionPane.showMessageDialog(this, "Start date cannot be after end date", 
-                    "Error", JOptionPane.ERROR_MESSAGE);
+                showErrorDialog("Start date cannot be after end date");
                 return;
             }
 
@@ -221,14 +281,20 @@ public class ProductReportSystem extends JFrame {
             // Save to file
             saveReportToFile(report.toString());
 
-            JOptionPane.showMessageDialog(this, "Report generated and saved successfully!", 
+            JOptionPane.showMessageDialog(this, 
+                "<html><div style='text-align: center;'>Report generated and saved successfully!<br>File: reports.txt</div></html>", 
                 "Success", JOptionPane.INFORMATION_MESSAGE);
             
             clearForm();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Invalid date format. Please use YYYY-MM-DD", 
-                "Error", JOptionPane.ERROR_MESSAGE);
+            showErrorDialog("Invalid date format. Please use YYYY-MM-DD");
         }
+    }
+
+    private void showErrorDialog(String message) {
+        JOptionPane.showMessageDialog(this, 
+            "<html><div style='text-align: center;'>" + message + "</div></html>", 
+            "Error", JOptionPane.ERROR_MESSAGE);
     }
 
     private void generateSalesReport(StringBuilder report, LocalDate startDate, LocalDate endDate) {
@@ -302,8 +368,15 @@ public class ProductReportSystem extends JFrame {
             writer.write(report);
             writer.write("\n========================================\n\n");
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Error saving report: " + e.getMessage(), 
-                "Error", JOptionPane.ERROR_MESSAGE);
+            showErrorDialog("Error saving report: " + e.getMessage());
+        }
+    }
+
+    private void viewReports() {
+        try {
+            Desktop.getDesktop().open(new java.io.File("reports.txt"));
+        } catch (IOException e) {
+            showErrorDialog("Could not open reports file: " + e.getMessage());
         }
     }
 
@@ -316,13 +389,23 @@ public class ProductReportSystem extends JFrame {
 
     public static void main(String[] args) {
         try {
+            // Set system look and feel
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            
+            // Customize some UI properties
+            UIManager.put("Button.foreground", Color.WHITE);
+            UIManager.put("Button.font", new Font("Segoe UI", Font.PLAIN, 14));
+            UIManager.put("Label.font", new Font("Segoe UI", Font.PLAIN, 14));
+            UIManager.put("TextField.font", new Font("Segoe UI", Font.PLAIN, 14));
+            UIManager.put("ComboBox.font", new Font("Segoe UI", Font.PLAIN, 14));
+            UIManager.put("TextArea.font", new Font("Segoe UI", Font.PLAIN, 14));
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        } 
 
         EventQueue.invokeLater(() -> {
-            new ProductReportSystem().setVisible(true);
+            ProductReportSystem frame = new ProductReportSystem();
+            frame.setVisible(true);
         });
     }
 }
